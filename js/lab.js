@@ -2,16 +2,6 @@ $(function() {
 
 	var count = 0;
 
-	// jsPlumb.bind("ready", function() {
-	// 	jsPlumb.makeSource($('.item'), {
-	// 		connector: 'Straight'
-	// 	});
-	// 	jsPlumb.makeTarget($('.item'), {
-	// 		anchor: 'Continuos'
-	// 	});
-		
-	// });
-
 	jsPlumb.bind("dblclick", function(conn, e) {
 		var lab = prompt("Please enter subnet name");
 		if (lab != null && lab != "") {
@@ -31,18 +21,23 @@ $(function() {
 	});
 
 	$("#generator").click(function() {
-		jsPlumb.deleteEveryEndpoint();
-		jsPlumb.detachEveryConnection();
-		
-		$("#arealab").empty();
-
-		var lines = $("#textarea").val().split("\n");
-		$(lines).each(function(index, value) {
-			if(value != "") {
-				var arr = value.split(",");
-				createItem(arr[0], arr[1]);
-			};
-		});
+		var deviceList = $("#textarea").val().split("\n");
+	
+		if(listIsValid(deviceList)) {
+			jsPlumb.deleteEveryEndpoint();
+			jsPlumb.detachEveryConnection();
+			
+			$("#arealab").empty();
+	
+			$(deviceList).each(function(index, value) {
+				if(value != "") {
+					var arr = value.split(",");
+					createItem(arr[0], arr[1]);
+				};
+			});
+		} else {
+			alert("You're device list is not valid!");
+		};
 	});
 
 	$("#genlab").click(function() {
@@ -81,8 +76,8 @@ $(function() {
 			$(array).each(function() {
 				result += this+"<br/>";
 			});
-			$("#alert-placeholder").append('<div class="alert alert-success alert-dismissable" ><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><strong></strong></div>');
-			$(".alert strong").html(result);
+			$("#alert-placeholder").empty().append('<div class="alert alert-success alert-dismissable" ><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><strong>lab.conf</strong><p></p></div>');
+			$(".alert p").html(result);
 		};
 	});
 	
@@ -159,4 +154,26 @@ function createItem(id, interfaces) {
 	jsPlumb.draggable(id, {
 		containment:"parent"
 	});
+}
+
+function listIsValid(deviceList) {
+	var valid = true;
+	if(deviceList.length > 0) {
+		// check for duplicates
+		deviceList.sort();
+		for(var i=0; i<deviceList.length-1; i++) {
+			if (deviceList[i+1] == deviceList[i]) {
+				valid = false;
+				break;
+			}
+		}
+		// check for device starting with "item". Not valid because it's a reserved ID
+		for(var i=0; i<deviceList.length; i++) {
+			if(deviceList[i].lastIndexOf("item", 0) === 0) {
+				valid = false;
+				break;
+			}
+		};
+	}
+	return valid;
 }
