@@ -32,21 +32,23 @@
     </div>
     </div>
 
-
 		<div class="container" id="wrapper">
+		<br/>
+		<div id="alert-placeholder"></div>
+			
 			<div class="col-md-9" id="arealab"></div>
 			<div class="col-md-3" id="right-panel">
 				<br/>
-				Click to add a single item
+				<button class="btn btn-primary" id="addItem">Add single device</button>
+				<hr/>
+				<p class="lead">Add the list of your items to create all of them</p>
+				<textarea class="form-control" rows="10" id="textarea"></textarea>
 				<br/>
-				<button class="btn btn-primary" id="addItem">Add ITEM</button>
-				<br/><br/>
-				<p>Add the list of your items to create all of them</p>
-				<textarea id="textarea"></textarea>
+				<button class="btn btn-primary" id="generator">Add list of devices</button>
+				<hr/>
+				<button class="btn btn-success" id="genlab">Generate lab.conf</button>
 				<br/>
-				<button class="btn btn-primary" id="generator">Create list!</button>
-				<br/><br/>
-				<button class="btn btn-primary" id="genlab">Gen LAB!</button>
+				<p id="labconf"></p>
 			</div>
 		</div>
 

@@ -47,20 +47,45 @@ $(function() {
 
 	$("#genlab").click(function() {
 		var connections = jsPlumb.getConnections();
-		$(connections).each(function(index, elem) {
-			var source = connections[index].source.find("input").val();
-			var target = connections[index].target.find("input").val();
+		var hasErrors = false;
+		var array = [];
+		
+		$(connections).each(function(index, elem) {			
+			var source = connections[index].endpoints[0].element.find("input").val();
+			var sourceEth = connections[index].endpoints[0].getOverlays()[0].getLabel();
+			var labRow1 = source + "[" + sourceEth.replace("eth", "") + "]=";
+
+			var target = connections[index].endpoints[1].element.find("input").val();			
+			var targetEth = connections[index].endpoints[1].getOverlays()[0].getLabel();
+			var labRow2 = target + "[" + targetEth.replace("eth", "") + "]=";
+			
 			if(connections[index].overlays.length == 0) {
 				connections[index].setPaintStyle({strokeStyle:"red"});
-				alert("You're subnet is missing a name!");
+				hasErrors = true;
 			} else {
 				var label = connections[index].overlays[0].getLabel();
-				alert(source+" - "+label+" - "+target);
+				labRow1 += label;
+				labRow2 += label;
+				
+				array.push(labRow1);
+				array.push(labRow2);
 			};
 		});
-
+		if(hasErrors) {
+			alert("Missing subnet name!");
+		} else if(connections.length==0) {
+			alert("No connections!");
+		} else {
+			array.sort();
+			var result = "";
+			$(array).each(function() {
+				result += this+"<br/>";
+			});
+			$("#alert-placeholder").append('<div class="alert alert-success alert-dismissable" ><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><strong></strong></div>');
+			$(".alert strong").html(result);
+		};
 	});
-
+	
 	$(document).on("click", ".add", function() {
 		var id = $(this).parent().attr("id");
 		var count;
